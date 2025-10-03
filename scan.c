@@ -125,9 +125,6 @@ TokenType getToken(void)
              case '*':
                currentToken = TIMES;
                break;
-             case '/':
-               currentToken = OVER;
-               break;
              case '(':
                currentToken = LPAREN;
                break;
@@ -236,12 +233,21 @@ TokenType getToken(void)
          if (c == '*')
          { save = FALSE;
            state = INCOMMENT_;
+         } else if (c == EOF)
+         { save = FALSE;
+           state = DONE;
+           currentToken = ENDFILE;
          } else save = FALSE;
          break;
        case INCOMMENT_:
          if (c == '/')
          { save = FALSE;
            state = START;
+         }
+         else if (c == EOF)
+         { save = FALSE;
+           state = DONE;
+           currentToken = ENDFILE;
          }
          else
          { save = FALSE;
