@@ -53,9 +53,10 @@ whitespace  [ \t]+
 {newline}       {lineno++;}
 {whitespace}    {/* skip whitespace */}
 "/*"            {BEGIN(COMMENT);}
-<COMMENT>"*/"   {BEGIN(INITIAL);}
-<COMMENT>\n     {lineno++;}
-<COMMENT>.      {}
+<COMMENT>"*/" {BEGIN(INITIAL);}
+<COMMENT>"\n" {lineno++;}
+<COMMENT>.    {/* skip comments */}
+<COMMENT><<EOF>>  {return ENDFILE;}
 .               {return ERROR;}
 
 %%

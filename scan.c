@@ -233,8 +233,9 @@ TokenType getToken(void)
          if (c == '*')
          { save = FALSE;
            state = INCOMMENT_;
-         } else if (c == EOF)
-         { save = FALSE;
+         }
+         else if (c == EOF)
+         { save = TRUE;
            state = DONE;
            currentToken = ENDFILE;
          } else save = FALSE;
@@ -245,7 +246,7 @@ TokenType getToken(void)
            state = START;
          }
          else if (c == EOF)
-         { save = FALSE;
+         { save = TRUE;
            state = DONE;
            currentToken = ENDFILE;
          }
