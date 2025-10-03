@@ -268,18 +268,26 @@ DFA로 표현하면 아래와 같다.
 
 Test Case #1
 
-<img src="./img/Custom Test Case #1.png"/>
+<img src="./img/Custom Test Case 1.png"/>
+
+<img src="./img/Custom Test Case 1 Result.png"/>
 
 Test Case #2
 
-<img src="./img/Custom Test Case #2.png"/>
+<img src="./img/Custom Test Case 2.png"/>
+
+<img src="./img/Custom Test Case 2 Result.png"/>
 
 #### Code Scanner made by FLEX
 
 Test Case #1
 
-<img src="./img/FLEX Test Case #1.png"/>
+<img src="./img/FLEX Test Case 1.png"/>
+
+<img src="./img/FLEX Test Case 1 Result.png"/>
 
 Test Case #2
 
-<img src="./img/FLEX Test Case #2.png"/>
+<img src="./img/FLEX Test Case 2.png"/>
+
+<img src="./img/FLEX Test Case 2 Result.png"/>
