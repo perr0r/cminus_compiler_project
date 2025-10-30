@@ -19,7 +19,6 @@ letter      [a-zA-Z]
 identifier  {letter}({letter}|{digit})*
 newline     \n
 whitespace  [ \t]+
-%x COMMENT
 
 %%
 
@@ -52,11 +51,16 @@ whitespace  [ \t]+
 {identifier}    {return ID;}
 {newline}       {lineno++;}
 {whitespace}    {/* skip whitespace */}
-"/*"            {BEGIN(COMMENT);}
-<COMMENT>"*/" {BEGIN(INITIAL);}
-<COMMENT>"\n" {lineno++;}
-<COMMENT>.    {/* skip comments */}
-<COMMENT><<EOF>>  {return ENDFILE;}
+"/*"            {
+                  char now, pre;
+                  do {
+                    now = input();
+                    if (now == 0) break;
+                    else if (now == '\n') lineno++;
+                    else if (now == '/' && pre == '*') break;
+                    pre = now;
+                  } while (1);
+                }
 .               {return ERROR;}
 
 %%
