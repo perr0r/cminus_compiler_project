@@ -1,0 +1,47 @@
+/* Test file for C-MINUS parser
+ * Testing various if-else cases including dangling else
+ */
+
+void main(void) {
+    /* Basic if-else */
+    if (a < 0)
+        if (a > 3)
+            a = 3;
+        else
+            a = 4;
+    
+    /* Nested if-else with potential dangling else */
+    if (x > 0)
+        if (y > 0)
+            z = 1;
+    else
+        z = 2;  /* This else belongs to which if? */
+    
+    /* Multiple nested if statements */
+    if (a > 0)
+        if (b > 0)
+            if (c > 0)
+                result = 1;
+            else
+                result = 2;
+    
+    /* Complex nested if-else with multiple statements */
+    if (score >= 90)
+        if (attendance > 80)
+            grade = 10;
+        else
+            grade = 20;
+    else
+        if (score >= 70)
+            grade = 30;
+        else
+            grade = 40;
+    
+    /* If without else, followed by if-else */
+    if (x < 0)
+        x = 0;
+    if (y < 0)
+        y = 0;
+    else
+        y = 1;
+}

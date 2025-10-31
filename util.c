@@ -97,6 +97,44 @@ TreeNode * newExpNode(ExpKind kind)
   return t;
 }
 
+/* Function newDeclNode creates a new declaration
+ * node for syntax tree construction
+ */
+TreeNode * newDeclNode(DeclKind kind)
+{ TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+  int i;
+  if (t==NULL)
+    fprintf(listing,"Out of memory error at line %d\n",lineno);
+  else {
+    for (i=0;i<MAXCHILDREN;i++) t->child[i] = NULL;
+    t->sibling = NULL;
+    t->nodekind = DeclK;
+    t->kind.decl = kind;
+    t->lineno = lineno;
+    t->type = Void;
+  }
+  return t;
+}
+
+/* Function newParamNode creates a new parameter
+ * node for syntax tree construction
+ */
+TreeNode * newParamNode(ParamKind kind)
+{ TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+  int i;
+  if (t==NULL)
+    fprintf(listing,"Out of memory error at line %d\n",lineno);
+  else {
+    for (i=0;i<MAXCHILDREN;i++) t->child[i] = NULL;
+    t->sibling = NULL;
+    t->nodekind = ParamK;
+    t->kind.param = kind;
+    t->lineno = lineno;
+    t->type = Void;
+  }
+  return t;
+}
+
 /* Function copyString allocates and makes a new
  * copy of an existing string
  */
@@ -115,7 +153,7 @@ char * copyString(char * s)
 /* Variable indentno is used by printTree to
  * store current number of spaces to indent
  */
-static indentno = 0;
+static int indentno = 0;
 
 /* macros to increase/decrease indentation */
 #define INDENT indentno+=2
@@ -138,28 +176,31 @@ void printTree( TreeNode * tree )
     printSpaces();
     if (tree->nodekind==StmtK)
     { switch (tree->kind.stmt) {
+        case CompK:
+          fprintf(listing,"Compound Statement:\n");
+          break;
         case IfK:
-          fprintf(listing,"If\n");
+          fprintf(listing,"If Statement:\n");
           break;
-        case RepeatK:
-          fprintf(listing,"Repeat\n");
+        case IfElseK:
+          fprintf(listing,"If-Else Statement:\n");
           break;
-        case AssignK:
-          fprintf(listing,"Assign to: %s\n",tree->attr.name);
+        case IterK:
+          fprintf(listing,"While Statement:\n");
           break;
-        case ReadK:
-          fprintf(listing,"Read: %s\n",tree->attr.name);
-          break;
-        case WriteK:
-          fprintf(listing,"Write\n");
+        case RetK:
+          fprintf(listing,"Return Statement:\n");
           break;
         default:
-          fprintf(listing,"Unknown ExpNode kind\n");
+          fprintf(listing,"Unknown StmtNode kind\n");
           break;
       }
     }
     else if (tree->nodekind==ExpK)
     { switch (tree->kind.exp) {
+        case AssignK:
+          fprintf(listing,"Assign:\n");
+          break;
         case OpK:
           fprintf(listing,"Op: ");
           printToken(tree->attr.op,"\0");
@@ -167,11 +208,59 @@ void printTree( TreeNode * tree )
         case ConstK:
           fprintf(listing,"Const: %d\n",tree->attr.val);
           break;
-        case IdK:
-          fprintf(listing,"Id: %s\n",tree->attr.name);
+        case NonArrIdK:
+          fprintf(listing,"Variable: name = %s\n",tree->attr.name);
+          break;
+        case ArrIdK:
+          fprintf(listing,"Variable: name = %s\n",tree->attr.name);
+          break;
+        case CallK:
+          fprintf(listing,"Call: function name = %s\n",tree->attr.name);
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
+          break;
+      }
+    }
+    else if (tree->nodekind==DeclK)
+    { switch (tree->kind.decl) {
+        case FuncK:
+          fprintf(listing,"Function Declaration: ");
+          fprintf(listing,"name = %s, ", tree->attr.name);
+          fprintf(listing,"return type = %s\n", tree->type == Integer ? "int" : "void");
+          break;
+        case NonArrVarK:
+          fprintf(listing,"Variable Declaration: ");
+          fprintf(listing,"name = %s, ", tree->attr.name);
+          fprintf(listing,"type = %s\n", tree->type == Integer ? "int" : "void");
+          break;
+        case ArrVarK:
+          fprintf(listing,"Variable Declaration: ");
+          fprintf(listing,"name = %s, ", tree->attr.name);
+          fprintf(listing,"type = %s[]\n", tree->type == Integer ? "int" : "void");
+          break;
+        default:
+          fprintf(listing,"Unknown DeclNode kind\n");
+          break;
+      }
+    }
+    else if (tree->nodekind==ParamK)
+    { switch (tree->kind.decl) {
+        case NonArrParamK:
+          fprintf(listing,"Parameter: ");
+          fprintf(listing,"name = %s, ", tree->attr.name);
+          fprintf(listing,"type = %s\n", tree->type == Integer ? "int" : "void");
+          break;
+        case ArrParamK:
+          fprintf(listing,"Parameter: ");
+          fprintf(listing,"name = %s, ", tree->attr.name);
+          fprintf(listing,"type = %s[]\n", tree->type == Integer ? "int" : "void");
+          break;
+        case VoidParamK:
+          fprintf(listing,"Void Parameter\n");
+          break;
+        default:
+          fprintf(listing,"Unknown ParamNode kind\n");
           break;
       }
     }
