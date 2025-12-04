@@ -27,7 +27,7 @@ fprintf(listing, "Error: invalid operation at line %d\n", lineno);
 // fprintf(listing, "Error: invalid condition at line %d\n", lineno);
 // Redefinition
 // Ex) Error: Symbol "x" is redefined at line 5 (already defined at line 2 3 4 4)
-// fprintf(listing, "Error: Symbol \"%s\" is redefined at line %d (already defined at line ", name, lineno);
+fprintf(listing, "Error: Symbol \"%s\" is redefined at line %d (already defined at line ", name, lineno);
 // Sequentially print all the line numbers using the following macros
 fprintf(listing, " ");
 fprintf(listing, "%d", symbol->lineList->lineno);

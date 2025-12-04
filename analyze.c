@@ -18,7 +18,7 @@ static Scope globalScope = NULL;
 // static Type currFuncType = Void;
 static int preserveLastScope = FALSE;
 static int skipRedfinedFuncDecl = FALSE;
-static int skipAll = FALSE;
+// static int skipAll = FALSE;
 
 /* counter for variable memory locations */
 // static int location;
@@ -235,9 +235,14 @@ static void insertNode(TreeNode *t) {
       if (st_exist_top(funcName)) {
       // if (st_lookup(funcName) == -1) {
         // symbolError(t, "function already declared");
-        fprintf(listing, "Error: Symbol \"%s\" is redefined at line %d (already defined at line ", funcName, t->lineno);
-        BucketList b = st_bucket(funcName);
-        fprintf(listing, "%d)\n", b->treeNode->lineno);
+        fprintf(listing, "Error: Symbol \"%s\" is redefined at line %d (already defined at line", funcName, t->lineno);
+        LineList l = st_bucket(funcName)->lines;
+        while (l != NULL) {
+          fprintf(listing, " %d", l->lineno);
+          l = l->next;
+        }
+        fprintf(listing, ")\n");
+        st_add_lineno(funcName, t->lineno);
 
         skipRedfinedFuncDecl = TRUE;
         Error = TRUE;
@@ -274,9 +279,14 @@ static void insertNode(TreeNode *t) {
 
         if (st_exist_top(name)) {
           // symbolError(t, "symbol already declared in this scope");
-          fprintf(listing, "Error: Symbol \"%s\" is redefined at line %d (already defined at line ", name, t->lineno);
-          BucketList b = st_bucket(name);
-          fprintf(listing, "%d)\n", b->treeNode->lineno);
+          fprintf(listing, "Error: Symbol \"%s\" is redefined at line %d (already defined at line", name, t->lineno);
+          LineList l = st_bucket(name)->lines;
+          while (l != NULL) {
+            fprintf(listing, " %d", l->lineno);
+            l = l->next;
+          }
+          fprintf(listing, ")\n");
+          st_add_lineno(name, t->lineno);
           Error = TRUE;
         } else {
           // st_insert(name, t->lineno, location++, t);
@@ -316,7 +326,14 @@ static void insertNode(TreeNode *t) {
           Error = TRUE;
         }
       } else { // goodd
-        fprintf(listing, "Error: Symbol \"%s\" is redefined at line %d (already defined at line ...)", t->attr.name, t->lineno);
+        fprintf(listing, "Error: Symbol \"%s\" is redefined at line %d (already defined at line", t->attr.name, t->lineno);
+        LineList l = st_bucket(t->attr.name)->lines;
+        while (l != NULL) {
+          fprintf(listing, " %d", l->lineno);
+          l = l->next;
+        }
+        fprintf(listing, ")\n");
+        st_add_lineno(t->attr.name, t->lineno);
         Error = TRUE;
       }
       break;
