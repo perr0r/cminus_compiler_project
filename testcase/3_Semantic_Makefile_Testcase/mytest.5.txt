@@ -1,0 +1,6 @@
+int main(void x) {
+    {
+        int a;
+        a = b+c;
+    }
+}

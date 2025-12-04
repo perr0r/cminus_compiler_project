@@ -67,15 +67,16 @@ var_decl    : type_spec identifier SEMI {
                 $$->attr.name = savedName;
                 $$->lineno = savedLineNo;
               }
-            | type_spec identifier LBRACE number RBRACE SEMI {
+            | type_spec identifier {
                 $$ = newDeclNode(ArrVarK);
                 $$->type = savedType;
                 $$->attr.name = savedName;
                 $$->lineno = savedLineNo;
-                
+            } LBRACE number RBRACE SEMI {
                 YYSTYPE t = newExpNode(ConstK);
                 t->attr.val = savedNumber;
-                $$->child[0] = t;
+                $3->child[0] = t;
+                $$ = $3;
               }
             ;
 fun_decl    : type_spec identifier {
@@ -87,7 +88,7 @@ fun_decl    : type_spec identifier {
                 $$ = $3;
                 $$->child[0] = $5;
                 $$->child[1] = $7;
-                $$->lineno = lineno;
+                // $$->lineno = lineno;
               }
             ;
 params      : param_list { $$ = $1; }

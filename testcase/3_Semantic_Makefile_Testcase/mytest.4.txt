@@ -1,0 +1,14 @@
+int main(void) {
+    int a;
+
+    while (1) {
+        int c;
+
+        a = c = 3;
+        return a;
+    }
+
+    while (2) {
+        int d;
+    }
+}

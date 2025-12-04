@@ -45,7 +45,7 @@
 #endif
 
 /* MAXRESERVED = the number of reserved words */
-#define MAXRESERVED 8
+#define MAXRESERVED 6
 
 /* Yacc/Bison generates its own integer values
  * for tokens
@@ -67,9 +67,9 @@ typedef enum {CompK,IfK,IfElseK,IterK,RetK} StmtKind;
 typedef enum {AssignK,OpK,ConstK,NonArrIdK,ArrIdK,CallK} ExpKind;
 typedef enum {FuncK,NonArrVarK,ArrVarK} DeclKind;
 typedef enum {NonArrParamK,ArrParamK,VoidParamK} ParamKind;
-typedef enum {Void,Integer} Type;
+typedef enum {Void,Integer,IntegerArray,Undetermined} Type;
 
-#define MAXCHILDREN 6
+#define MAXCHILDREN 3
 
 typedef struct treeNode
    { struct treeNode * child[MAXCHILDREN];
@@ -88,6 +88,7 @@ typedef struct treeNode
       char * name;    // name
      } attr;
      Type type;       // type
+     struct ScopeRec *scope; // scope
    } TreeNode;
 
 /**************************************************/
