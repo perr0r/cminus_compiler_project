@@ -17,7 +17,7 @@ static Scope globalScope = NULL;
 // static char * currFuncName = NULL;
 // static Type currFuncType = Void;
 static int preserveLastScope = FALSE;
-static int skipRedfinedFuncDecl = FALSE;
+static int skipRedefinedFuncDecl = FALSE;
 // static int skipAll = FALSE;
 
 /* counter for variable memory locations */
@@ -144,6 +144,7 @@ static char * newStmtScopeName(char *curr, int childCnt) {
 
 static void insertNode(TreeNode *t) {
   if (t == NULL) return;
+  if (skipRedefinedFuncDecl) return ;
 
   switch (t->nodekind) {
     case StmtK:
@@ -163,8 +164,8 @@ static void insertNode(TreeNode *t) {
       if (preserveLastScope) {
         t->scope = sc_top();
         preserveLastScope = FALSE;
-      } else if (skipRedfinedFuncDecl) {
-        skipRedfinedFuncDecl = FALSE; // sex
+      // } else if (skipRedefinedFuncDecl) {
+        // skipRedfinedFuncDecl = FALSE; // sex
         // skipAll = TRUE;
       } else {
         char *newScopeName = newStmtScopeName(sc_top()->funcName, sc_top()->childCnt);
@@ -244,7 +245,7 @@ static void insertNode(TreeNode *t) {
         fprintf(listing, ")\n");
         st_add_lineno(funcName, t->lineno);
 
-        skipRedfinedFuncDecl = TRUE;
+        skipRedefinedFuncDecl = TRUE;
         Error = TRUE;
       } else {
         // currFuncName = funcName;
@@ -301,19 +302,21 @@ static void insertNode(TreeNode *t) {
     break;
 
     case ParamK:
-    if (skipRedfinedFuncDecl) break;
+    // if (skipRedfinedFuncDecl) break;
     switch (t->kind.param) {
       case VoidParamK:
-        t->type = Void;
-        /* void parameter */
-      break;
-
       case NonArrParamK:
       case ArrParamK:
+      if (t->kind.param == VoidParamK && t->attr.name == NULL) {
+        /* void parameter */
+        t->type = Void;
+        break;
+      } 
       // if (t->type == Void) {
       //   symbolError(t, "void type parameter is not allowed");
       // }
-      if (st_lookup(t->attr.name) == -1) {
+      // if (st_lookup(t->attr.name) == -1) {
+      if (!st_exist_top(t->attr.name)) {
         // st_insert(t->attr.name,t->lineno,location++,t);
         st_insert(t->attr.name,t->lineno,sc_top()->cntLoc++,t);
         if (t->type == Integer) {
@@ -326,6 +329,9 @@ static void insertNode(TreeNode *t) {
           Error = TRUE;
         }
       } else { // goodd
+        if (t->type == Void) {
+          fprintf(listing, "Error: The void-type variable is declared at line %d (name : \"%s\")\n", t->lineno, t->attr.name);
+        }
         fprintf(listing, "Error: Symbol \"%s\" is redefined at line %d (already defined at line", t->attr.name, t->lineno);
         LineList l = st_bucket(t->attr.name)->lines;
         while (l != NULL) {
@@ -346,6 +352,16 @@ static void insertNode(TreeNode *t) {
 }
 
 static void postInsertNode(TreeNode *t) {
+  // if (t->nodekind == DeclK && t->kind.decl == FuncK)
+  //   skipRedefinedFuncDecl = FALSE;
+  // else if (skipRedefinedFuncDecl) return ;
+  if (skipRedefinedFuncDecl) {
+    if (t->nodekind == DeclK && t->kind.decl == FuncK)
+      skipRedefinedFuncDecl = FALSE;
+    else 
+      return ;
+  }
+
   switch (t->nodekind) {
     case StmtK:
     switch (t->kind.stmt) {
@@ -397,12 +413,15 @@ void buildSymtab(TreeNode * syntaxTree) {
 
 static void preTypeCheck(TreeNode *t) {
   if (t == NULL) return;
+  if (skipRedefinedFuncDecl) return ;
 
   switch (t->nodekind) {
     case DeclK:
     switch (t->kind.decl) {
       case FuncK:
       // currFuncName = t->attr.name;
+      if (t->scope == NULL) skipRedefinedFuncDecl = TRUE;
+
       break;
       default:
       break;
@@ -426,6 +445,15 @@ static void preTypeCheck(TreeNode *t) {
  */
 static void checkNode(TreeNode *t) {
   if (t == NULL) return;
+  // if (t->nodekind == DeclK && t->kind.decl == FuncK)
+  //   skipRedefinedFuncDecl = FALSE;
+  // else if (skipRedefinedFuncDecl) return ;
+  if (skipRedefinedFuncDecl) {
+    if (t->nodekind == DeclK && t->kind.decl == FuncK)
+      skipRedefinedFuncDecl = FALSE;
+    else 
+      return ;
+  }
 
   BucketList b;
 
