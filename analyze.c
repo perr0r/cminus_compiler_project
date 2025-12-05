@@ -553,7 +553,7 @@ static void checkNode(TreeNode *t) {
           break; // seolbim
         }
 
-        if (b->treeNode->kind.decl == FuncK) {
+        if (b->treeNode->nodekind == DeclK && b->treeNode->kind.decl == FuncK) {
           fprintf(listing, "Error: Invalid function call at line %d (name : \"%s\")\n", t->lineno, t->attr.name);
           Error = TRUE;
           t->type = Undetermined;
