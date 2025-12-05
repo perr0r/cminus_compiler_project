@@ -596,8 +596,8 @@ static void checkNode(TreeNode *t) {
             declParamCnt++; declParam = declParam->sibling;}
           while (useParam != NULL) {
             useParamCnt++; useParam = useParam->sibling;}
-          declParam = b->treeNode->child[0];
-          useParam = t->child[0];
+          declParam = b->treeNode->child[0];  // re-init
+          useParam = t->child[0];             // re-init
 
           if (useParamCnt == 0) {
             if (declParamCnt == 1 && b->treeNode->kind.param == VoidParamK);
