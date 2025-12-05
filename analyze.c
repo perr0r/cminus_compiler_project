@@ -534,11 +534,12 @@ static void checkNode(TreeNode *t) {
         Type leftType = t->child[0]->type;
         Type rightType = t->child[1]->type;
         if (leftType == Integer && rightType == Integer) {
-          t->type = Integer;
+          // t->type = Integer;
         } else {
           fprintf(listing, "Error: invalid operation at line %d\n", t->lineno);
           Error = TRUE;
         }
+        t->type = t->child[0]->type;
         break;
 
       case ConstK:
@@ -595,9 +596,11 @@ static void checkNode(TreeNode *t) {
             declParamCnt++; declParam = declParam->sibling;}
           while (useParam != NULL) {
             useParamCnt++; useParam = useParam->sibling;}
+          declParam = b->treeNode->child[0];
+          useParam = t->child[0];
 
           if (useParamCnt == 0) {
-            if (declParamCnt == 1 && b->treeNode->child[0]->type == Void);
+            if (declParamCnt == 1 && b->treeNode->kind.param == VoidParamK);
             else status = 1;
           } else {
             if (declParamCnt != useParamCnt) status = 1;
