@@ -102,7 +102,7 @@ param_list  : param_list COMMA param {
                 YYSTYPE t = $1;
                 while (t->sibling != NULL) t = t->sibling;
                 t->sibling = $3;
-                $$ = t;
+                $$ = $1;
               }
             | param { $$ = $1; }
             ;
@@ -163,6 +163,7 @@ sel_stmt    : IF LPAREN exp RPAREN stmt %prec THEN {
                 $$->child[1] = $5;
                 $$->child[2] = $7;
             }
+            ;
 exp_stmt    : exp SEMI { $$ = $1; }
             | SEMI { $$ = NULL; }
             ;
