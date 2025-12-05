@@ -553,12 +553,18 @@ static void checkNode(TreeNode *t) {
           break; // seolbim
         }
 
-        if (b->treeNode->type == IntegerArray) {
-          t->type = IntegerArray;
-        } else if (b->treeNode->type == Integer) {
-          t->type = Integer;
+        if (b->treeNode->kind.decl == FuncK) {
+          fprintf(listing, "Error: Invalid function call at line %d (name : \"%s\")\n", t->lineno, t->attr.name);
+          Error = TRUE;
+          t->type = Undetermined;
         } else {
-          // NonArrIdK error message
+          if (b->treeNode->type == IntegerArray) {
+            t->type = IntegerArray;
+          } else if (b->treeNode->type == Integer) {
+            t->type = Integer;
+          } else {
+            // NonArrIdK error message
+          }
         }
         break;
 
@@ -600,7 +606,7 @@ static void checkNode(TreeNode *t) {
           useParam = t->child[0];             // re-init
 
           if (useParamCnt == 0) {
-            if (declParamCnt == 1 && b->treeNode->kind.param == VoidParamK);
+            if (declParamCnt == 1 && b->treeNode->child[0]->kind.param == VoidParamK);
             else status = 1;
           } else {
             if (declParamCnt != useParamCnt) status = 1;
